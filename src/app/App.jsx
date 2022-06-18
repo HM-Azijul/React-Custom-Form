@@ -1,3 +1,4 @@
+import InputGroup from '../components/shared/forms/InputGroup';
 import Button from '../components/UI/buttons/Button';
 import TextInput from '../components/UI/inputs/TextInput';
 import Text from '../components/UI/texts/Text';
@@ -5,10 +6,11 @@ import Text from '../components/UI/texts/Text';
 const App = () => {
   return (
     <div>
-      App
-      <TextInput />
+      {/* <TextInput />
       <Button>Test Me</Button>
-      <Text size="lg">Hello World</Text>
+      <Text size="lg">lorem1000</Text> */}
+
+      <InputGroup />
     </div>
   );
 };
