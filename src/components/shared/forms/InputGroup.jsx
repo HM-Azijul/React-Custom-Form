@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import TextInput from '../../UI/inputs/TextInput';
-import Text from '../../UI/texts/Text';
+import Label from '../../UI/inputs/Label';
 
 const Container = styled.div`
   width: 100%;
@@ -11,11 +11,16 @@ const Container = styled.div`
   gap: 0.5rem;
 `;
 
-const InputGroup = () => {
+const InputGroup = ({ label, name, value, placeholder }) => {
   return (
     <Container>
-      <Text>It will be a label</Text>
-      <TextInput placeholder="what is your name?" />
+      <Label htmlFor={name}>{label}</Label>
+      <TextInput
+        name={name}
+        id={name}
+        placeholder={placeholder ?? ''}
+        value={value}
+      />
     </Container>
   );
 };

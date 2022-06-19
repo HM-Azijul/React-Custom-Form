@@ -5,12 +5,16 @@ import Text from '../components/UI/texts/Text';
 
 const App = () => {
   return (
-    <div>
+    <div className="root">
       {/* <TextInput />
       <Button>Test Me</Button>
       <Text size="lg">lorem1000</Text> */}
 
-      <InputGroup />
+      <InputGroup
+        name="title"
+        placeholder={'Enter Your Title'}
+        label={'Title'}
+      />
     </div>
   );
 };
