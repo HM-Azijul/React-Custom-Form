@@ -14,6 +14,7 @@ const App = () => {
         name="title"
         placeholder={'Enter Your Title'}
         label={'Title'}
+        error={'Something went wrong'}
       />
     </div>
   );
