@@ -1,73 +1,94 @@
 import { useState } from 'react';
 import InputGroup from '../components/shared/forms/InputGroup';
 import Button from '../components/UI/buttons/Button';
+import { deepClone } from '../utils/object-utils';
 
 const init = {
-  title: '',
-  bio: '',
-  skills: '',
+  title: {
+    value: '',
+    error: '',
+    focus: false,
+  },
+  bio: {
+    value: '',
+    error: '',
+    focus: false,
+  },
+  skills: {
+    value: '',
+    error: '',
+    focus: false,
+  },
 };
 
 const App = () => {
-  // all state
-  const [values, setValues] = useState({ ...init });
-  const [errors, setErrors] = useState({ ...init });
-  const [focuses, setFocuses] = useState({
-    title: false,
-    bio: false,
-    skills: false,
-  });
+  const [state, setState] = useState(deepClone(init));
+  const [hasError, setHasError] = useState(false);
+
+  const mapStateToValues = (state) => {
+    return Object.keys(state).reduce((acc, cur) => {
+      acc[cur] = state[cur].value;
+      return acc;
+    }, {});
+  };
 
   const handleChange = (e) => {
-    setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-
-    const key = e.target.name;
+    const { name: key, value } = e.target;
+    const oldState = deepClone(state);
+    const values = mapStateToValues(oldState);
+    oldState[key].value = value;
     const { errors } = checkValidity(values);
 
-    if (!errors[key]) {
-      setErrors((prev) => ({
-        ...prev,
-        [key]: '',
-      }));
+    if (oldState[key].focus && errors[key]) {
+      oldState[key].error = errors[key];
+    } else {
+      oldState[key].error = '';
     }
+
+    setState(oldState);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const values = mapStateToValues(state);
     const { isValid, errors } = checkValidity(values);
+
     if (isValid) {
-      console.log(values);
-      setErrors({ ...errors });
+      console.log(state);
     } else {
-      // console.log(errors);
-      setErrors({ ...errors });
+      const oldState = deepClone(state);
+      Object.keys(errors).forEach((key) => {
+        oldState[key].error = errors[key];
+      });
+      setState(oldState);
     }
   };
 
   const handleFocus = (e) => {
-    setFocuses((prev) => ({ ...prev, [e.target.name]: true }));
+    const { name } = e.target;
+    const oldState = deepClone(state);
+    oldState[name].focus = true;
+    setState(oldState);
   };
 
   const handleBlur = (e) => {
     const key = e.target.name;
+    const values = mapStateToValues(state);
     const { errors } = checkValidity(values);
-    if (errors[key] && focuses[key]) {
-      setErrors((prev) => ({
-        ...prev,
-        [key]: errors[key],
-      }));
+    const oldState = deepClone(state);
+
+    if (oldState[key].focus && errors[key]) {
+      oldState[key].error = errors[key];
     } else {
-      setErrors((prev) => ({
-        ...prev,
-        [key]: '',
-      }));
+      oldState[key].error = '';
     }
+    setState(oldState);
   };
 
   const checkValidity = (values) => {
     const errors = {};
     const { title, bio, skills } = values;
-
     if (!title) {
       errors.title = 'Invalid title';
     }
@@ -75,9 +96,8 @@ const App = () => {
       errors.bio = 'Invalid Bio';
     }
     if (!skills) {
-      errors.skills = 'Invalid Skills';
+      errors.skills = 'Invalid skills';
     }
-
     return {
       errors,
       isValid: Object.keys(errors).length === 0,
@@ -87,41 +107,46 @@ const App = () => {
   return (
     <div className="root">
       <form onSubmit={handleSubmit}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem',
+          }}
+        >
           <InputGroup
-            value={values.title}
-            label={'Title'}
+            value={state.title.value}
+            label={'Title:'}
             name={'title'}
             placeholder={'Software Engineer'}
-            error={errors.title}
+            error={state.title.error}
             onChange={handleChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
           />
-
           <InputGroup
-            value={values.bio}
-            label={'Bio'}
+            value={state.bio.value}
+            label={'Bio:'}
             name={'bio'}
-            placeholder={'I am a software engineer ....'}
-            error={errors.bio}
+            placeholder={'I am a software engineer...'}
+            error={state.bio.error}
             onChange={handleChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
           />
-
           <InputGroup
-            value={values.skills}
-            label={'Skills'}
+            value={state.skills.value}
+            label={'Skills:'}
             name={'skills'}
-            placeholder={'javsScript, react'}
-            error={errors.skills}
+            placeholder={'javascript, react'}
+            error={state.skills.error}
             onChange={handleChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
           />
-
-          <Button>Submit</Button>
+          <Button disabled={hasError} type="submit">
+            Submit
+          </Button>
         </div>
       </form>
     </div>
