@@ -9,11 +9,27 @@ const init = {
 };
 
 const App = () => {
+  // all state
   const [values, setValues] = useState({ ...init });
   const [errors, setErrors] = useState({ ...init });
+  const [focuses, setFocuses] = useState({
+    title: false,
+    bio: false,
+    skills: false,
+  });
 
   const handleChange = (e) => {
     setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+    const key = e.target.name;
+    const { errors } = checkValidity(values);
+
+    if (!errors[key]) {
+      setErrors((prev) => ({
+        ...prev,
+        [key]: '',
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -25,6 +41,26 @@ const App = () => {
     } else {
       // console.log(errors);
       setErrors({ ...errors });
+    }
+  };
+
+  const handleFocus = (e) => {
+    setFocuses((prev) => ({ ...prev, [e.target.name]: true }));
+  };
+
+  const handleBlur = (e) => {
+    const key = e.target.name;
+    const { errors } = checkValidity(values);
+    if (errors[key] && focuses[key]) {
+      setErrors((prev) => ({
+        ...prev,
+        [key]: errors[key],
+      }));
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        [key]: '',
+      }));
     }
   };
 
@@ -57,8 +93,10 @@ const App = () => {
             label={'Title'}
             name={'title'}
             placeholder={'Software Engineer'}
-            onChange={handleChange}
             error={errors.title}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
           />
 
           <InputGroup
@@ -66,8 +104,10 @@ const App = () => {
             label={'Bio'}
             name={'bio'}
             placeholder={'I am a software engineer ....'}
-            onChange={handleChange}
             error={errors.bio}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
           />
 
           <InputGroup
@@ -75,8 +115,10 @@ const App = () => {
             label={'Skills'}
             name={'skills'}
             placeholder={'javsScript, react'}
-            onChange={handleChange}
             error={errors.skills}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
           />
 
           <Button>Submit</Button>
