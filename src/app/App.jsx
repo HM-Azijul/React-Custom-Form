@@ -21,8 +21,10 @@ const App = () => {
     const { isValid, errors } = checkValidity(values);
     if (isValid) {
       console.log(values);
+      setErrors({ ...errors });
     } else {
-      console.log(errors);
+      // console.log(errors);
+      setErrors({ ...errors });
     }
   };
 
@@ -56,6 +58,7 @@ const App = () => {
             name={'title'}
             placeholder={'Software Engineer'}
             onChange={handleChange}
+            error={errors.title}
           />
 
           <InputGroup
@@ -64,6 +67,7 @@ const App = () => {
             name={'bio'}
             placeholder={'I am a software engineer ....'}
             onChange={handleChange}
+            error={errors.bio}
           />
 
           <InputGroup
@@ -72,6 +76,7 @@ const App = () => {
             name={'skills'}
             placeholder={'javsScript, react'}
             onChange={handleChange}
+            error={errors.skills}
           />
 
           <Button>Submit</Button>
